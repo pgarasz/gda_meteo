@@ -13,6 +13,7 @@ api_key = get_api_key('config.json')
 start_date = '2017-09-06'
 end_date = '2017-09-11'
 outpost_code = 31
+params = ['rain', 'winddir', 'windlevel', 'temp', 'pressure', 'humidity']
 
 gda_meteo = GdaMeteo(api_key)
 table = build_outpost_table(outpost_code)
@@ -26,17 +27,12 @@ with Session(engine) as session:
 
     for date in dates_generator(start_date, end_date):
 
-        wind_dir = gda_meteo.get_winddir(date, outpost_code)
-        wind_speed = gda_meteo.get_windspeed(date, outpost_code)
-
         print(f'   {date}')
 
-        zipped = zip(wind_dir, wind_speed)                 # API zawsze zwraca 24 wartości dla dnia
-        hourly = {d[0]: [d[1], s[1]] for d, s in zipped}   # {datatime: [direction, speed]}
+        hourly_data = gda_meteo.get_meteo_params(date, outpost_code, params)
 
-        for h, v in hourly.items():
-            row = table(datetime=datetime.fromisoformat(h),
-                        wind_dir=v[0], wind_speed=v[1])
+        for dt in hourly_data:
+            row = table(datetime=datetime.fromisoformat(dt), **hourly_data[dt])
             session.add(row)
 
-    session.commit()
+        session.commit()
