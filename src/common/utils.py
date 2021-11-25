@@ -1,13 +1,26 @@
-import json
+class Config:
+    """Class for loading config from json files"""
 
+    api_key = ''
+    db_url = ''
 
-def get_api_key(path: str) -> str:
-    """Load api key from json file."""
+    def __init__(self, path: str):
+        """Load config from json file to instance attributes"""
 
-    with open(path) as f:
-        config = json.load(f)
+        import json
 
-    return config.get('api_key')
+        with open(path) as f:
+            dict = json.load(f)
+
+        for k, v in dict.items():
+            setattr(self, k, v)
+
+    def __repr__(self):
+
+        params = ', '.join(
+            [f'{k}={v}' for k, v in self.__dict__.items()])
+
+        return f'Config({params})'
 
 
 def sanitize_date(value: str) -> tuple[int, int, int]:

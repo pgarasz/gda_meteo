@@ -1,1 +1,4 @@
-{"api_key": "paste your key here"}
+{
+    "api_key": "paste your key here",
+    "db_url": "sqlite:///gda_meteo.db"
+}

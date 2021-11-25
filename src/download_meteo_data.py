@@ -3,12 +3,12 @@ from datetime import datetime
 from sqlalchemy import create_engine, select, update
 from sqlalchemy.orm import Session
 
-from common.utils import get_api_key, dates_generator, print_start_info
+from common.utils import Config, dates_generator, print_start_info
 from common.base import GdaMeteo
 from db.schema import build_outpost_table
 
 
-api_key = get_api_key('config.json')
+conf = Config('config.json')
 
 start_date = '2017-09-06'
 end_date = '2017-09-11'
@@ -16,9 +16,9 @@ outpost_code = 31
 params = ['rain', 'winddir', 'windlevel', 'temp', 'pressure', 'humidity']
 overwrite = False
 
-gda_meteo = GdaMeteo(api_key)
+gda_meteo = GdaMeteo(conf.api_key)
 table = build_outpost_table(outpost_code)
-engine = create_engine('sqlite:///../db/gda_meteo.db', echo=False, future=True)
+engine = create_engine(conf.db_url, echo=False, future=True)
 
 table.__table__.create(bind=engine, checkfirst=True)
 
