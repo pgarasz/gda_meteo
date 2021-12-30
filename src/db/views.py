@@ -5,15 +5,9 @@ from db.schema import build_outpost_table
 from db.statistics import monthly_avg_rainfall, monthly_avg_temp, wind_rose
 
 
-def _create_outpost_stats_view(outpost_number,
-                               engine,
-                               stats_func,
-                               refresh):
+def exec_create_view(engine, view_name, query, refresh):
 
-    view_name = f'o{outpost_number}_{stats_func.__name__}'
     metadata = MetaData()
-    table = build_outpost_table(str(outpost_number))
-    query = stats_func(table)
 
     create_view(view_name, query, metadata,
                 cascade_on_drop=False)
@@ -22,6 +16,18 @@ def _create_outpost_stats_view(outpost_number,
         metadata.drop_all(engine)
 
     metadata.create_all(engine)
+
+
+def _create_outpost_stats_view(outpost_number,
+                               engine,
+                               stats_func,
+                               refresh):
+
+    view_name = f'o{outpost_number}_{stats_func.__name__}'
+    table = build_outpost_table(str(outpost_number))
+    query = stats_func(table)
+
+    exec_create_view(engine, view_name, query, refresh)
 
 
 def create_view_monthly_avg_rainfall(outpost_number, engine, refresh=True):
