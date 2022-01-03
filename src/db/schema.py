@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, DateTime, SmallInteger
+from sqlalchemy import Column, Float, DateTime, SmallInteger, Boolean, Text
 from sqlalchemy.orm import declarative_base
 
 
@@ -24,3 +24,21 @@ def build_outpost_table(outpost_code):
         sun = Column(Float(1), nullable=True)
 
     return Outpost
+
+
+class OutpostsMetadata(Base):
+
+    __tablename__ = 'outposts_metadata'
+
+    no = Column(SmallInteger, primary_key=True)
+    name = Column(Text)
+    active = Column(Boolean)
+    rain = Column(Boolean)
+    water = Column(Boolean)
+    flow = Column(Boolean)
+    winddir = Column(Boolean)
+    windlevel = Column(Boolean)
+    temp = Column(Boolean)
+    pressure = Column(Boolean)
+    humidity = Column(Boolean)
+    sun = Column(Boolean)
