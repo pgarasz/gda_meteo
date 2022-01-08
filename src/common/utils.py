@@ -3,6 +3,7 @@ class Config:
 
     api_key = ''
     db_url = ''
+    plotly_theme = ''
 
     def __init__(self, path: str):
         """Load config from json file to instance attributes"""

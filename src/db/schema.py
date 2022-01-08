@@ -11,6 +11,7 @@ def build_outpost_table(outpost_code):
     class Outpost(Base):
 
         __tablename__ = f'outpost_{outpost_code}'
+        __table_args__ = {'extend_existing': True}
 
         datetime = Column(DateTime, primary_key=True)
         rain = Column(Float(1), nullable=True)

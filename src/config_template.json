@@ -1,4 +1,5 @@
 {
-    "api_key": "paste your key here",
-    "db_url": "sqlite:///gda_meteo.db"
+  "api_key": "paste your key here",
+  "db_url": "sqlite:///gda_meteo.db",
+  "plotly_theme": "none"
 }
