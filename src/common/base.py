@@ -2,17 +2,12 @@ import requests
 
 from typing import Any
 
-ALLOWED_METEO_PARAMS = [
-    'rain',
-    'water',
-    'flow',
-    'winddir',
-    'windlevel',
-    'temp',
-    'pressure',
-    'humidity',
-    'sun',
-]
+DEFAULT_METEO_PARAMS = ['rain', 'winddir', 'windlevel', 'temp', 'pressure', 'humidity']
+DEFAULT_HYDRO_PARAMS = ['water', 'flow']
+OTHER_PARAMS = ['no', 'name', 'active', 'sun']
+
+ALLOWED_OUTPOST_PARAMS = DEFAULT_METEO_PARAMS + \
+    DEFAULT_HYDRO_PARAMS + OTHER_PARAMS
 
 
 class RestAPIerror(Exception):
@@ -43,7 +38,7 @@ class GdaMeteoBase:
 
         Args:
             param (str): meteo parameter name to get from API, eg. 'rain', 'winddir',
-                         see ALLOWED_METEO_PARAMS for more
+                         see ALLOWED_OUTPOST_PARAMS for more
             date (str): date in isoformat (starting 2016-08-06)
             outpost_code (int): call get_outposts_list() to see available codes
 
@@ -129,7 +124,7 @@ class GdaMeteo(GdaMeteoBase):
         return self._get_meteo_data('sun', date, outpost_code)
 
     def get_meteo_params(self, date: str, outpost_code: int,
-                         params: list[str] = ALLOWED_METEO_PARAMS) -> dict[str, dict[str, float]]:
+                         params: list[str] = DEFAULT_METEO_PARAMS) -> dict[str, dict[str, float]]:
 
         """Get multiple meteo parameters from one outpost.
 
@@ -137,14 +132,13 @@ class GdaMeteo(GdaMeteoBase):
             date (str): date in isoformat (starting 2016-08-06)
             outpost_code (int): call get_outposts_list() to see available codes
             params (list[str]): list of meteo parameters to get from API, eg. ['rain', 'winddir'],
-                                defaults to all ALLOWED_METEO_PARAMS
+                                defaults to all ALLOWED_OUTPOST_PARAMS
 
         Returns:
             dict (str: dict[str: float]): 2d dict, each key holds a dict with param_name: value
         """
 
-        if set(params).difference(set(ALLOWED_METEO_PARAMS)):
-            raise ValueError('Incorrect meteo parameter name')
+        self.validate_outpost_params(params)
 
         data = {}
 
@@ -159,3 +153,10 @@ class GdaMeteo(GdaMeteoBase):
                     data[key].update(result[key])
 
         return data
+
+    @staticmethod
+    def validate_outpost_params(params):
+        """Raise ValueError if params are not part of ALLOWED_OUTPOST_PARAMS set"""
+
+        if set(params).difference(set(ALLOWED_OUTPOST_PARAMS)):
+            raise ValueError('Incorrect outpost parameter name')
